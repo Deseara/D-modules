@@ -123,6 +123,14 @@ class SteamWatch(loader.Module):
             "<emoji document_id=5454419255430767770>⚠️</emoji>Целевая цена выше текущей.\n"
             "Текущая: <b>{price}</b> {cur}. Укажи цену не выше текущей."
         ),
+        "cmd_steamadd": "Добавить игру: .steamadd <название|appid> [цена]",
+        "cmd_steamrm": "Удалить игру: .steamrm <название|appid>",
+        "cmd_steamlist": "Список отслеживаемых игр",
+        "cmd_steamlistprice": "Список игр по цене (дешевле → дороже)",
+        "cmd_steamsearch": "Поиск игр: .steamsearch <запрос>",
+        "cmd_steamregion": "Регион Steam: .steamregion <cc> (ru/us и т.д.)",
+        "cmd_steamnotifyhere": "Отправлять уведомления в этот чат",
+        "cmd_steamcheck": "Проверить цены сейчас",
     }
 
     def __init__(self):
@@ -151,15 +159,7 @@ class SteamWatch(loader.Module):
                 "ID чата для уведомлений (по умолчанию — текущий при .steamnotifyhere)",
                 validator=loader.validators.Integer(),
             ),
-            "cmd_steamadd": "Добавить игру: .steamadd <название|appid> [цена]",
-        "cmd_steamrm": "Удалить игру: .steamrm <название|appid>",
-        "cmd_steamlist": "Список отслеживаемых игр",
-        "cmd_steamlistprice": "Список игр по цене (дешевле → дороже)",
-        "cmd_steamsearch": "Поиск игр: .steamsearch <запрос>",
-        "cmd_steamregion": "Регион Steam: .steamregion <cc> (ru/us и т.д.)",
-        "cmd_steamnotifyhere": "Отправлять уведомления в этот чат",
-        "cmd_steamcheck": "Проверить цены сейчас",
-    }
+        )
 
         self._apps: dict[str, dict] = {}
 
