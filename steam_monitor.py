@@ -191,9 +191,9 @@ class SteamWatch(loader.Module):
         price, disc, cur = _price_from_overview(price_overview)
         return name, price, disc, cur
 
-    @loader.command()
+    @loader.command(ru_doc="Добавить игру: .steamadd <название|appid> [цена]")
     async def steamadd(self, message: Message):
-
+        """Добавить игру: .steamadd <appid|название> [цена]"""
         args = utils.get_args_raw(message)
         if not args:
             return await utils.answer(message, self.strings("bad_args"))
@@ -283,9 +283,9 @@ class SteamWatch(loader.Module):
         extra = f" | цель: {target/100:.2f} {cur}" if target and cur else ""
         await call.edit(self.strings("added").format(name=utils.escape_html(name or f"App {appid}"), extra=extra))
 
-    @loader.command()
+    @loader.command(ru_doc="Удалить игру: .steamrm <название|appid>")
     async def steamrm(self, message: Message):
-        
+        """Удалить игру: .steamrm <appid>"""
         query = utils.get_args_raw(message)
         if not query:
             return await utils.answer(message, self.strings("bad_args"))
@@ -317,9 +317,9 @@ class SteamWatch(loader.Module):
         self._save()
         await utils.answer(message, self.strings("removed").format(name=utils.escape_html(name)))
 
-    @loader.command()
+    @loader.command(ru_doc="Список отслеживаемых игр")
     async def steamlist(self, message: Message):
-        
+        """Список отслеживаемых игр"""
         self._load()
         if not self._apps:
             return await utils.answer(message, self.strings("list_empty"))
@@ -345,9 +345,9 @@ class SteamWatch(loader.Module):
 
         await utils.answer(message, "\n".join(lines))
 
-    @loader.command()
+    @loader.command(ru_doc="Список игр по цене (дешевле → дороже)")
     async def steamlistprice(self, message: Message):
-        
+        """Список игр по цене (дешевле → дороже)"""
         self._load()
         if not self._apps:
             return await utils.answer(message, self.strings("list_empty"))
@@ -375,32 +375,32 @@ class SteamWatch(loader.Module):
 
         await utils.answer(message, "\n".join(rows))
 
-    @loader.command()
+    @loader.command(ru_doc="Регион Steam: .steamregion <cc> (ru/us и т.д.)")
     async def steamregion(self, message: Message):
-
+        """Регион Steam: .steamregion <cc> (ru/us и т.д.)"""
         cc = utils.get_args_raw(message).lower()
         if not cc or len(cc) not in {2}:
             return await utils.answer(message, "Пример: .steamregion ru")
         self.config["region_cc"] = cc
         await utils.answer(message, self.strings("region_set").format(cc=cc))
 
-    @loader.command()
+    @loader.command(ru_doc="Отправлять уведомления в этот чат")
     async def steamnotifyhere(self, message: Message):
-
+        """Включить уведомления в этот чат"""
         chat = getattr(message, "chat_id", None) or getattr(message, "peer_id", None)
         self.config["notify_chat"] = int(chat)
         await utils.answer(message, self.strings("notify_here").format(chat=chat))
 
-    @loader.command()
+    @loader.command(ru_doc="Проверить цены сейчас")
     async def steamcheck(self, message: Message):
-
+        """Проверить цены сейчас"""
         await utils.answer(message, self.strings("checking"))
         await self._run_check(notify=True)
         await utils.answer(message, self.strings("check_done"))
 
-    @loader.command()
+    @loader.command(ru_doc="Поиск игр: .steamsearch <запрос> (вернёт название)")
     async def steamsearch(self, message: Message):
-
+        """Поиск игр: .steamsearch <запрос> (вернёт AppID)"""
         q = utils.get_args_raw(message)
         if not q:
             return await utils.answer(message, "Пример: .steamsearch counter strike")
