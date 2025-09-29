@@ -61,23 +61,30 @@ class JokeMod(loader.Module):
         await self.session.close()
 
     async def _format_joke(self, joke_data):
-        if joke_data["type"] == "single":
-            joke_text = joke_data["joke"]
+        if not joke_data:
+            return None
             
+        if joke_data["type"] == "single":
+            joke_text = joke_data.get("joke", "")
+            if not joke_text:
+                return None
+                
             translated = await self._translate_text(joke_text)
-            if translated:
+            if translated and translated.strip():
                 text = self.strings("single_joke").format(translated)
             else:
                 text = f"{self.strings('translation_error')}\n\n{self.strings('single_joke').format(joke_text)}"
                 
-        else:
-            setup_text = joke_data["setup"]
-            delivery_text = joke_data["delivery"]
-            
+        else:  # twopart joke
+            setup_text = joke_data.get("setup", "")
+            delivery_text = joke_data.get("delivery", "")
+            if not setup_text or not delivery_text:
+                return None
+                
             translated_setup = await self._translate_text(setup_text)
             translated_delivery = await self._translate_text(delivery_text)
             
-            if translated_setup and translated_delivery:
+            if translated_setup and translated_delivery and translated_setup.strip() and translated_delivery.strip():
                 text = self.strings("twopart_joke").format(
                     translated_setup,
                     translated_delivery
@@ -85,9 +92,12 @@ class JokeMod(loader.Module):
             else:
                 text = f"{self.strings('translation_error')}\n\n{self.strings('twopart_joke').format(setup_text, delivery_text)}"
         
-        return text
+        return text if text and text.strip() else None
 
     async def _translate_text(self, text, target_lang="ru"):
+        if not text or not text.strip():
+            return None
+            
         try:
             url = "https://api.mymemory.translated.net/get"
             params = {
@@ -99,8 +109,10 @@ class JokeMod(loader.Module):
                 if response.status == 200:
                     data = await response.json()
                     if data.get("responseStatus") == 200:
-                        return data["responseData"]["translatedText"]
+                        translated = data["responseData"]["translatedText"]
+                        return translated if translated and translated.strip() else None
             
+            # Fallback to Google Translate
             url2 = "https://translate.googleapis.com/translate_a/single"
             params2 = {
                 "client": "gtx",
@@ -114,7 +126,8 @@ class JokeMod(loader.Module):
                 if response.status == 200:
                     data = await response.json()
                     if data and len(data) > 0 and len(data[0]) > 0:
-                        return data[0][0][0]
+                        translated = data[0][0][0]
+                        return translated if translated and translated.strip() else None
                         
         except Exception:
             pass
@@ -129,16 +142,19 @@ class JokeMod(loader.Module):
 
         url = f"https://v2.jokeapi.dev/joke/{categories}"
 
-        async with self.session.get(url, params=params) as response:
-            if response.status != 200:
-                return None
-            
-            data = await response.json()
-            
-            if data.get("error"):
-                return None
+        try:
+            async with self.session.get(url, params=params) as response:
+                if response.status != 200:
+                    return None
                 
-            return data
+                data = await response.json()
+                
+                if data.get("error"):
+                    return None
+                    
+                return data
+        except Exception as e:
+            return None
 
     @loader.command(ru_doc="Отправляет случайную переведенную шутку с JokeAPI")
     async def joke(self, message):
@@ -157,13 +173,17 @@ class JokeMod(loader.Module):
             joke_data = await self._fetch_joke(categories)
             
             if not joke_data:
-                await message.edit(self.strings("api_error"))
+                await message.edit(f"🚫 API Error: Нет данных от API для категории '{categories}'")
                 return
             
             joke_text = await self._format_joke(joke_data)
 
+            if not joke_text or not joke_text.strip():
+                await message.edit(f"🚫 Format Error: Не удалось обработать шутку. Тип: {joke_data.get('type', 'unknown')}")
+                return
+
             await message.delete()
             await message.respond(joke_text, parse_mode="HTML")
 
-        except aiohttp.ClientError:
-            await message.edit(self.strings("api_error"))
+        except Exception as e:
+            await message.edit(f"🚫 Ошибка: {str(e)}")
