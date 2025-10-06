@@ -11,6 +11,7 @@
 # Description: Interaction with @lejal_bot for random memes
 # Author: @deseara
 
+
 __version__ = (1, 0, 0)
 
 from .. import loader, utils
@@ -110,16 +111,30 @@ class LejalKey(loader.Module):
                 await utils.answer(message, self.strings["no_response"])
                 return
             
+            await self._update_stats()
+            
             if bot_response.photo:
-                caption = f"<blockquote>Мем от @lejal_bot</blockquote>"
-                await message.respond(caption, file=bot_response.photo)
-                await message.delete()
+                try:
+                    caption = f"<blockquote>Мем от @lejal_bot</blockquote>"
+                    await message.respond(caption, file=bot_response.photo)
+                    await message.delete()
+                except Exception as e:
+                    if "TOPIC_CLOSED" in str(e):
+                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n📷 <i>Фото получено, но не удалось отправить (топик закрыт)</i>")
+                    else:
+                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n❌ <i>Ошибка отправки фото: {str(e)}</i>")
             elif bot_response.text:
                 response_text = f"<blockquote>Мем от @lejal_bot</blockquote>\n\n{bot_response.text}"
                 await utils.answer(message, response_text)
             elif bot_response.sticker:
-                await message.respond(f"<blockquote>Мем от @lejal_bot</blockquote>", file=bot_response.sticker)
-                await message.delete()
+                try:
+                    await message.respond(f"<blockquote>Мем от @lejal_bot</blockquote>", file=bot_response.sticker)
+                    await message.delete()
+                except Exception as e:
+                    if "TOPIC_CLOSED" in str(e):
+                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n🎭 <i>Стикер получен, но не удалось отправить (топик закрыт)</i>")
+                    else:
+                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n❌ <i>Ошибка отправки стикера: {str(e)}</i>")
             else:
                 await utils.answer(message, self.strings["no_response"])
                 
@@ -145,19 +160,33 @@ class LejalKey(loader.Module):
                 await utils.answer(message, self.strings["no_response"])
                 return
             
+            await self._update_stats()
+            
             key_emoji = "🗝️"
             
             if bot_response.photo:
-                caption = f"<blockquote>Лежал ключ</blockquote>"
-                await message.respond(caption, file=bot_response.photo)
-                await message.delete()
+                try:
+                    caption = f"<blockquote>Лежал ключ</blockquote>"
+                    await message.respond(caption, file=bot_response.photo)
+                    await message.delete()
+                except Exception as e:
+                    if "TOPIC_CLOSED" in str(e):
+                        await utils.answer(message, f"<blockquote>Лежал ключ</blockquote>\n\n📷 <i>Фото получено, но не удалось отправить (топик закрыт)</i>")
+                    else:
+                        await utils.answer(message, f"<blockquote>Лежал ключ</blockquote>\n\n❌ <i>Ошибка отправки фото: {str(e)}</i>")
             elif bot_response.text:
                 # create by zov coder
                 response_text = f"<blockquote>Лежал ключ</blockquote>\n\n{bot_response.text}"
                 await utils.answer(message, response_text)
             elif bot_response.sticker:
-                await message.respond(f"<blockquote>Лежал ключ</blockquote>", file=bot_response.sticker)
-                await message.delete()
+                try:
+                    await message.respond(f"<blockquote>Лежал ключ</blockquote>", file=bot_response.sticker)
+                    await message.delete()
+                except Exception as e:
+                    if "TOPIC_CLOSED" in str(e):
+                        await utils.answer(message, f"<blockquote>Лежал ключ</blockquote>\n\n🎭 <i>Стикер получен, но не удалось отправить (топик закрыт)</i>")
+                    else:
+                        await utils.answer(message, f"<blockquote>Лежал ключ</blockquote>\n\n❌ <i>Ошибка отправки стикера: {str(e)}</i>")
             else:
                 await utils.answer(message, self.strings["no_response"])
                 
@@ -182,13 +211,23 @@ class LejalKey(loader.Module):
         await utils.answer(message, stats_text)
 
     @loader.command()
+    async def lejalresetcmd(self, message):
+        """| Сбросить статистику модуля"""
+        
+        self.db.set("LejalKey", "requests_count", 0)
+        self.db.set("LejalKey", "last_request", "Никогда")
+        self.db.set("LejalKey", "first_run", True)
+        
+        await utils.answer(message, "<emoji document_id=5328239124933515868>🔄</emoji> <b>Статистика модуля сброшена!</b>")
+
+    @loader.command()
     async def lejalarchivecmd(self, message):
         """| Добавить мем от @lejal_bot в архив"""
         
         await utils.answer(message, "<emoji document_id=5328274090262275771>📁</emoji> <b>Добавляю мем в архив...</b>")
-        
         try:
             await self._add_to_archive()
+            await self._update_stats()
             await utils.answer(message, "<emoji document_id=5328239124933515868>✅</emoji> <b>Мем добавлен в архив!</b>")
         except Exception as e:
             logger.error(f"Error in lejalarchivecmd: {e}")
@@ -200,7 +239,7 @@ class LejalKey(loader.Module):
         self.db.set("LejalKey", "requests_count", current_count + 1)
         
         import datetime
-        now = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        now = datetime.datetime.now(datetime.timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
         self.db.set("LejalKey", "last_request", now)
 
     async def _add_to_archive(self):
@@ -217,7 +256,13 @@ class LejalKey(loader.Module):
             messages = await self._client.get_messages(bot, limit=1)
             if messages and messages[0]:
                 # create by zov coder
-                await messages[0].forward_to("me")
+                try:
+                    await messages[0].forward_to("me")
+                except Exception as forward_error:
+                    if "TOPIC_CLOSED" in str(forward_error):
+                        logger.warning("Cannot forward to archive: topic closed")
+                    else:
+                        logger.error(f"Error forwarding to archive: {forward_error}")
                 
         except Exception as e:
             logger.error(f"Error adding to archive: {e}")
