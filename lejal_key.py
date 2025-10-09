@@ -8,7 +8,7 @@
 #                © Copyright 2025
 #            ✈ https://t.me/desearamodules
 # Name: Lejal Key
-# Description: Interaction with @lejal_bot for random memes
+# Description: Interaction with @lejalbot for random memes
 # Author: @deseara
 
 
