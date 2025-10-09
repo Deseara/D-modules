@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 @loader.tds
 class LejalKey(loader.Module):
-    """Interaction with @lejal_bot for random memes"""
+    """Interaction with @lejalbot for random memes"""
 
     strings = {
         "name": "LejalKey",
@@ -52,7 +52,7 @@ class LejalKey(loader.Module):
             ),
             loader.ConfigValue(
                 "BOT_USERNAME",
-                "lejal_bot",
+                "lejalbot",
                 lambda: "Username бота (без @)",
             ),
         )
@@ -67,7 +67,7 @@ class LejalKey(loader.Module):
             self.db.set("LejalKey", "first_run", False)
 
     async def _get_meme_from_bot(self, message):
-        """Получить мем от @lejal_bot"""
+        """Получить мем от @lejalbot"""
         try:
             bot_username = self.config["BOT_USERNAME"]
             bot = await self._client.get_entity(f"@{bot_username}")
@@ -99,7 +99,7 @@ class LejalKey(loader.Module):
 
     @loader.command()
     async def lejalcmd(self, message):
-        """| Получить случайный мем от @lejal_bot"""
+        """| Получить случайный мем от @lejalbot"""
         
         await utils.answer(message, self.strings["requesting"])
         
@@ -144,12 +144,12 @@ class LejalKey(loader.Module):
 
     @loader.command()
     async def memecmd(self, message):
-        """| Получить случайный мем от @lejal_bot (алиас для .lejal)"""
+        """| Получить случайный мем от @lejalbot (алиас для .lejal)"""
         await self.lejalcmd(message)
 
     @loader.command()
     async def keycmd(self, message):
-        """| Получить случайный мем про ключ от @lejal_bot"""
+        """| Получить случайный мем про ключ от @lejalbot"""
         
         await utils.answer(message, self.strings["requesting"])
         
@@ -196,12 +196,12 @@ class LejalKey(loader.Module):
 
     @loader.command()
     async def lejalstatscmd(self, message):
-        """| Показать статистику взаимодействия с @lejal_bot"""
+        """| Показать статистику взаимодействия с @lejalbot"""
         
         stats_count = self.db.get("LejalKey", "requests_count", 0)
         last_request = self.db.get("LejalKey", "last_request", "Никогда")
         
-        stats_text = f"""<emoji document_id=5328239124933515868>📊</emoji> <b>Статистика @lejal_bot:</b>
+        stats_text = f"""<emoji document_id=5328239124933515868>📊</emoji> <b>Статистика @lejalbot:</b>
 
 <emoji document_id=5328274090262275771>🔢</emoji> <b>Запросов отправлено:</b> {stats_count}
 <emoji document_id=5328274090262275771>🕐</emoji> <b>Последний запрос:</b> {last_request}
@@ -222,7 +222,7 @@ class LejalKey(loader.Module):
 
     @loader.command()
     async def lejalarchivecmd(self, message):
-        """| Добавить мем от @lejal_bot в архив"""
+        """| Добавить мем от @lejalbot в архив"""
         
         await utils.answer(message, "<emoji document_id=5328274090262275771>📁</emoji> <b>Добавляю мем в архив...</b>")
         try:
