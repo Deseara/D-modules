@@ -26,21 +26,21 @@ class LejalKey(loader.Module):
 
     strings = {
         "name": "LejalKey",
-        "requesting": "<emoji document_id=5328274090262275771>⏳</emoji> <b>Запрашиваю мем у @lejal_bot...</b>",
-        "error": "<emoji document_id=5328145443106873128>❌</emoji> <b>Ошибка при получении мема от @lejal_bot</b>",
-        "timeout": "<emoji document_id=5328145443106873128>⏰</emoji> <b>Таймаут ожидания ответа от @lejal_bot</b>",
-        "bot_not_found": "<emoji document_id=5328145443106873128>🤖</emoji> <b>Бот @lejal_bot не найден или недоступен</b>",
-        "no_response": "<emoji document_id=5328145443106873128>📵</emoji> <b>@lejal_bot не ответил</b>",
-        "success": "<emoji document_id=5328239124933515868>✅</emoji> <b>Мем получен от @lejal_bot:</b>",
+        "requesting": "<emoji document_id=5328274090262275771>⏳</emoji> <b>Запрашиваю мем у @lejalbot...</b>",
+        "error": "<emoji document_id=5328145443106873128>❌</emoji> <b>Ошибка при получении мема от @lejalbot</b>",
+        "timeout": "<emoji document_id=5328145443106873128>⏰</emoji> <b>Таймаут ожидания ответа от @lejalbot</b>",
+        "bot_not_found": "<emoji document_id=5328145443106873128>🤖</emoji> <b>Бот @lejalbot не найден или недоступен</b>",
+        "no_response": "<emoji document_id=5328145443106873128>📵</emoji> <b>@lejalbot не ответил</b>",
+        "success": "<emoji document_id=5328239124933515868>✅</emoji> <b>Мем получен от @lejalbot:</b>",
     }
 
     strings_ru = {
-        "requesting": "<emoji document_id=5328274090262275771>⏳</emoji> <b>Запрашиваю мем у @lejal_bot...</b>",
-        "error": "<emoji document_id=5328145443106873128>❌</emoji> <b>Ошибка при получении мема от @lejal_bot</b>",
-        "timeout": "<emoji document_id=5328145443106873128>⏰</emoji> <b>Таймаут ожидания ответа от @lejal_bot</b>",
-        "bot_not_found": "<emoji document_id=5328145443106873128>🤖</emoji> <b>Бот @lejal_bot не найден или недоступен</b>",
-        "no_response": "<emoji document_id=5328145443106873128>📵</emoji> <b>@lejal_bot не ответил</b>",
-        "success": "<emoji document_id=5328239124933515868>✅</emoji> <b>Мем получен от @lejal_bot:</b>",
+        "requesting": "<emoji document_id=5328274090262275771>⏳</emoji> <b>Запрашиваю мем у @lejalbot...</b>",
+        "error": "<emoji document_id=5328145443106873128>❌</emoji> <b>Ошибка при получении мема от @lejalbot</b>",
+        "timeout": "<emoji document_id=5328145443106873128>⏰</emoji> <b>Таймаут ожидания ответа от @lejalbot</b>",
+        "bot_not_found": "<emoji document_id=5328145443106873128>🤖</emoji> <b>Бот @lejalbot не найден или недоступен</b>",
+        "no_response": "<emoji document_id=5328145443106873128>📵</emoji> <b>@lejalbot не ответил</b>",
+        "success": "<emoji document_id=5328239124933515868>✅</emoji> <b>Мем получен от @lejalbot:</b>",
     }
 
     def __init__(self):
@@ -115,26 +115,26 @@ class LejalKey(loader.Module):
             
             if bot_response.photo:
                 try:
-                    caption = f"<blockquote>Мем от @lejal_bot</blockquote>"
+                    caption = f"<blockquote>Мем от @lejalbot</blockquote>"
                     await message.respond(caption, file=bot_response.photo)
                     await message.delete()
                 except Exception as e:
                     if "TOPIC_CLOSED" in str(e):
-                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n📷 <i>Фото получено, но не удалось отправить (топик закрыт)</i>")
+                        await utils.answer(message, f"<blockquote>Мем от @lejalbot</blockquote>\n\n📷 <i>Фото получено, но не удалось отправить (топик закрыт)</i>")
                     else:
-                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n❌ <i>Ошибка отправки фото: {str(e)}</i>")
+                        await utils.answer(message, f"<blockquote>Мем от @lejalbot</blockquote>\n\n❌ <i>Ошибка отправки фото: {str(e)}</i>")
             elif bot_response.text:
-                response_text = f"<blockquote>Мем от @lejal_bot</blockquote>\n\n{bot_response.text}"
+                response_text = f"<blockquote>Мем от @lejalbot</blockquote>\n\n{bot_response.text}"
                 await utils.answer(message, response_text)
             elif bot_response.sticker:
                 try:
-                    await message.respond(f"<blockquote>Мем от @lejal_bot</blockquote>", file=bot_response.sticker)
+                    await message.respond(f"<blockquote>Мем от @lejalbot</blockquote>", file=bot_response.sticker)
                     await message.delete()
                 except Exception as e:
                     if "TOPIC_CLOSED" in str(e):
-                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n🎭 <i>Стикер получен, но не удалось отправить (топик закрыт)</i>")
+                        await utils.answer(message, f"<blockquote>Мем от @lejalbot</blockquote>\n\n🎭 <i>Стикер получен, но не удалось отправить (топик закрыт)</i>")
                     else:
-                        await utils.answer(message, f"<blockquote>Мем от @lejal_bot</blockquote>\n\n❌ <i>Ошибка отправки стикера: {str(e)}</i>")
+                        await utils.answer(message, f"<blockquote>Мем от @lejalbot</blockquote>\n\n❌ <i>Ошибка отправки стикера: {str(e)}</i>")
             else:
                 await utils.answer(message, self.strings["no_response"])
                 
