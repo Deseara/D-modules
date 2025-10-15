@@ -52,7 +52,7 @@ class LejalKey(loader.Module):
             ),
             loader.ConfigValue(
                 "BOT_USERNAME",
-                "lejalbot",
+                "lejal_bot",
                 lambda: "Username бота (без @)",
             ),
         )
